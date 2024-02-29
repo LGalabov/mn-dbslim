@@ -1,0 +1,25 @@
+services:
+  application:
+    image: ghcr.io/lgalabov/mn-dbslim:local
+    container_name: mn-application
+    ports:
+      - "8080:8080"
+    environment:
+      MICRONAUT_ENVIRONMENTS: apimode,bgmode
+    depends_on:
+      - database
+
+  database:
+    image: postgres
+    container_name: mn-database
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: dbuser
+      POSTGRES_PASSWORD: dbpass
+      POSTGRES_DB: data
+
+volumes:
+  pgdata:

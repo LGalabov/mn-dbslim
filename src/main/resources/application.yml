@@ -1,0 +1,52 @@
+micronaut:
+  application:
+    name: mn-dbslim
+  server:
+    netty:
+      worker:
+        threads: 2
+      access-logger:
+        enabled: true
+
+datasources:
+  default:
+    driver-class-name: org.postgresql.Driver
+    db-type: postgres
+    schema-generate: CREATE_DROP
+    dialect: POSTGRES
+    maximum-pool-size: 5
+
+flyway:
+  datasources:
+    default:
+      enabled: true
+
+endpoints:
+  all:
+    enabled: false
+  health:
+    enabled: true
+    details-visible: ANONYMOUS
+
+application:
+  lorem-sentences:
+    - Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    - In eu mi bibendum neque egestas congue.
+    - Amet porttitor eget dolor morbi non arcu.
+    - Nec feugiat nisl pretium fusce id velit ut tortor.
+    - Nulla porttitor massa id neque aliquam vestibulum morbi blandit.
+    - Tellus in metus vulputate eu scelerisque felis imperdiet proin fermentum.
+    - Fermentum et sollicitudin ac orci.
+    - Id eu nisl nunc mi, sed do eiusmod tempor incididunt ut labore et dolore magna.
+    - In cursus turpis massa tincidunt dui ut ornare.
+    - Id semper risus in hendrerit gravida rutrum quisque non tellus.
+    - Tellus at urna condimentum mattis pellentesque id nibh.
+    - Amet justo donec enim diam.
+    - Sed viverra tellus in hac habitasse platea dictumst.
+    - Mi sit amet mauris commodo quis imperdiet massa tincidunt.
+    - Praesent elementum facilisis leo vel fringilla est ullamcorper eget nulla.
+    - Lorem ipsum dolor sit amet consectetur adipiscing.
+    - Nulla facilisi cras fermentum odio eu feugiat pretium nibh ipsum.
+    - Maecenas volutpat blandit aliquam etiam erat velit scelerisque in.
+    - Tempus quam pellentesque nec nam aliquam.
+    - Nunc lobortis mattis aliquam faucibus purus in massa.

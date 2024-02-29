@@ -1,0 +1,79 @@
+plugins {
+    id "io.micronaut.application" version "4.3.3"
+    id "io.micronaut.test-resources" version "4.3.3"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
+    id "io.micronaut.aot" version "4.3.3"
+}
+
+version = "0.1.0-local"
+group = "com.example"
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("21")
+    targetCompatibility = JavaVersion.toVersion("21")
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    annotationProcessor "io.micronaut:micronaut-http-validation"
+    annotationProcessor "io.micronaut.serde:micronaut-serde-processor"
+    annotationProcessor "io.micronaut.data:micronaut-data-processor"
+
+    implementation "io.micronaut.serde:micronaut-serde-jackson"
+    implementation "io.micronaut.data:micronaut-data-jdbc"
+    implementation "io.micronaut.flyway:micronaut-flyway"
+    runtimeOnly "ch.qos.logback:logback-classic"
+    runtimeOnly "org.flywaydb:flyway-database-postgresql"
+    runtimeOnly "io.micronaut.sql:micronaut-jdbc-hikari"
+    runtimeOnly "org.postgresql:postgresql"
+    runtimeOnly "org.yaml:snakeyaml"
+
+    testImplementation "io.micronaut:micronaut-http-client"
+}
+
+micronaut {
+    runtime "netty"
+    testRuntime "junit5"
+    processing {
+        incremental true
+        annotations "com.example.*"
+    }
+    aot { // interface AOTOptimizations
+        precomputeOperations = true
+        optimizeClassLoading = true
+        optimizeNetty = true
+        replaceLogbackXml = true
+    }
+}
+
+application {
+    mainClass = "com.example.Application"
+}
+
+compileJava {
+    options.compilerArgs << '-parameters'
+}
+
+tasks.named("optimizedDockerfile") {
+    if (System.getenv("BUILD_ENV") == "CI") {
+        baseImage = System.getenv("BASE_IMAGE_TAG")
+    } else {
+        baseImage = project.localBaseImageTag
+    }
+    args("-Dmicronaut.environments=docker")
+    args("-Xmx256m")
+}
+
+tasks.named("optimizedDockerBuild") {
+    if (System.getenv("BUILD_ENV") == "CI") {
+        images = [
+                System.getenv("IMAGE_TAG_SEMVER"),
+                System.getenv("IMAGE_TAG_COMMIT"),
+                System.getenv("IMAGE_TAG_LATEST")]
+    } else {
+        images = [project.localImageTag]
+    }
+}

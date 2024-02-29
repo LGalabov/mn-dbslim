@@ -1,0 +1,5 @@
+datasources:
+  default:
+    url: ${JDBC_URL:`jdbc:postgresql://mn-database/data`}
+    username: ${JDBC_USER:dbuser}
+    password: ${JDBC_PASSWORD:dbpass}
