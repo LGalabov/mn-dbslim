@@ -5,9 +5,6 @@ plugins {
     id "io.micronaut.aot" version "4.3.3"
 }
 
-version = "0.1.0-local"
-group = "com.example"
-
 java {
     sourceCompatibility = JavaVersion.toVersion("21")
     targetCompatibility = JavaVersion.toVersion("21")
@@ -50,7 +47,7 @@ micronaut {
 }
 
 application {
-    mainClass = "com.example.Application"
+    mainClass = project.entrypoint
 }
 
 compileJava {
