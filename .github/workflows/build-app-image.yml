@@ -1,11 +1,14 @@
 name: Build Application Image
-on: workflow_dispatch
+on:
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
+      contents: write
       packages: write
+
     env:
       DOCKER_REGISTRY_URL: ghcr.io
       IMAGE_REPOSITORY: ghcr.io/lgalabov/mn-dbslim
@@ -47,11 +50,7 @@ jobs:
           IMAGE_TAG_LATEST: ${{ env.IMAGE_REPOSITORY }}:latest
         run: ./gradlew optimizedDockerPush --no-daemon
 
-#      - name: Create Release
-#        uses: ncipollo/release-action@v1
-#        with:
-#          tag: ${{ steps.semver.outputs.next }}
-#          generateReleaseNotes: true
-#          allowUpdates: true
-#          draft: false
-#          makeLatest: true
+      - name: Push Git Tag
+        run: |
+          git tag ${{ steps.semver.outputs.next }} --force
+          git push origin --tags --force

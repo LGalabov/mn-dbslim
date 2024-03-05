@@ -1,0 +1,46 @@
+name: Create Release
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Commit tag to be released'
+        default: 'v1.0.0'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate Tag
+        env:
+          TAG: ${{ github.event.inputs.tag }}
+          SEMVER_REGEX: ^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$
+        run: |
+          [[ $TAG =~ $SEMVER_REGEX ]] || \
+            ( echo "Error: $TAG is not a valid semver"; exit 1 )
+          [ `git tag -l $TAG` ] || \
+            ( echo "Error: tag $TAG does not exist"; exit 1 )
+
+      - name: Build Changelog
+        id: changelog
+        uses: requarks/changelog-action@v1
+        with:
+          token: ${{ github.token }}
+          tag: ${{ github.event.inputs.tag }}
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.event.inputs.tag }}
+          body: ${{ steps.changelog.outputs.changes }}
+          draft: false
+          makeLatest: true
+          allowUpdates: true
